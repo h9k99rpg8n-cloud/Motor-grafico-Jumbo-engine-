@@ -1,0 +1,33 @@
+// --- Módulo de Entorno del Motor Jumbo ---
+// Esta versión usa nuestros propios recursos locales.
+
+export function crearEntornoPersonalizado(escena) {
+
+    // 1. Crear el Cielo (Skybox) con nuestra imagen 'cielo_jumbo.png'
+    // El skybox es un cubo gigante que nos rodea para simular el cielo.
+    const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, escena);
+    const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", escena);
+    skyboxMaterial.backFaceCulling = false;
+    
+    // Aquí está la magia: le decimos que construya la textura del cubo
+    // usando nuestra imagen para las 6 caras.
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture.CreateFromImages(
+        ["./recursos/cielo_jumbo.png", "./recursos/cielo_jumbo.png", "./recursos/cielo_jumbo.png", "./recursos/cielo_jumbo.png", "./recursos/cielo_jumbo.png", "./recursos/cielo_jumbo.png"],
+        escena
+    );
+    
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skybox.material = skyboxMaterial;
+
+    // 2. Crear un Suelo Básico
+    // Como pediste, ya no es de pasto. Es un suelo neutro.
+    const suelo = BABYLON.MeshBuilder.CreateGround("suelo", {width: 100, height: 100}, escena);
+    const sueloMaterial = new BABYLON.StandardMaterial("sueloMat", escena);
+    sueloMaterial.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.3); // Un color gris oscuro
+    suelo.material = sueloMaterial;
+
+    // Devolvemos el entorno por si lo necesitamos después.
+    return { skybox, suelo };
+}

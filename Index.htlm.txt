@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Motor Jumbo v1.0 - GitHub Ready</title>
+    <style>
+        html, body { overflow: hidden; width: 100%; height: 100%; margin: 0; padding: 0; }
+        #lienzoRender { width: 100%; height: 100%; touch-action: none; }
+    </style>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs-playground.com/loaders/babylonjs.loaders.min.js"></script>
+</head>
+<body>
+    <canvas id="lienzoRender"></canvas>
+
+    <script type="module">
+        // 1. Importamos a todo nuestro equipo de expertos
+        import { crearEscena } from './nucleo/Escena.js';
+        import { iniciarMotor } from './nucleo/Bucle.js';
+        import { crearCaja } from './nucleo/Objetos.js';
+        import { crearEntornoPersonalizado } from './nucleo/Entorno.js'; // <-- ¡Llamamos al experto correcto!
+
+        // --- ARRANQUE DEL MOTOR JUMBO ---
+
+        // Preparamos los componentes
+        const lienzo = document.getElementById("lienzoRender");
+        const motorBabylon = new BABYLON.Engine(lienzo, true);
+
+        // Creamos el mundo vacío
+        const escena = crearEscena(motorBabylon, lienzo);
+        
+        // Damos las órdenes
+        crearEntornoPersonalizado(escena); // "¡Decora el mundo con nuestro cielo y suelo!"
+        const miCaja = crearCaja(escena);
+        miCaja.position.y = 1; // Subimos la caja para que no esté enterrada
+
+        // ¡Encendemos el motor!
+        iniciarMotor(motorBabylon, escena);
+
+    </script>
+</body>
+</html>

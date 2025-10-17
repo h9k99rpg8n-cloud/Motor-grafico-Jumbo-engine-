@@ -1,0 +1,11 @@
+// --- Módulo de Objetos del Motor Jumbo ---
+
+// Esta función crea un objeto 'caja' y lo añade a la escena que le digamos.
+export function crearCaja(escena) {
+    
+    // Usamos MeshBuilder para construir una forma de caja.
+    const caja = BABYLON.MeshBuilder.CreateBox("caja", { size: 1.5 }, escena);
+
+    // La devolvemos por si queremos hacer algo más con ella después.
+    return caja;
+}

@@ -1,0 +1,17 @@
+// --- Módulo de Escena del Motor Jumbo ---
+export function crearEscena(motor, lienzo) {
+
+    // Creamos el objeto 'escena'.
+    const escena = new BABYLON.Scene(motor);
+    escena.clearColor = new BABYLON.Color3(0.1, 0.1, 0.2); // Fondo
+
+    // Creamos una cámara.
+    const camara = new BABYLON.ArcRotateCamera("camara", -Math.PI / 2, Math.PI / 2.5, 15, BABYLON.Vector3.Zero(), escena);
+    camara.attachControl(lienzo, true);
+
+    // Creamos una luz.
+    const luz = new BABYLON.HemisphericLight("luz", new BABYLON.Vector3(1, 1, 0), escena);
+
+    // YA NO CREAMOS LA ESFERA AQUÍ. Devolvemos la escena vacía.
+    return escena;
+}

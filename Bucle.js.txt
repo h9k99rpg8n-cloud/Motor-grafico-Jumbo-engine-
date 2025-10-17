@@ -1,0 +1,22 @@
+// --- Módulo del Bucle Principal del Motor Jumbo ---
+
+// Esta función inicia el ciclo que dibuja la escena constantemente.
+function iniciarBucleDeRenderizado(motor, escena) {
+    motor.runRenderLoop(function () {
+        escena.render();
+    });
+}
+
+// Esta función se asegura de que el lienzo se ajuste si cambia el tamaño de la ventana.
+function manejarRedimension() {
+    window.addEventListener("resize", function () {
+        motor.resize();
+    });
+}
+
+// Exportamos una función principal que se encarga de llamar a las otras.
+// Así, desde index.html solo tenemos que llamar a una cosa.
+export function iniciarMotor(motor, escena) {
+    iniciarBucleDeRenderizado(motor, escena);
+    manejarRedimension(motor);
+}
