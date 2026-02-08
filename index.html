@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jumbo Engine</title>
+    <link rel="stylesheet" href="css/ios-theme.css" />
+  </head>
+  <body>
+    <div class="background" aria-hidden="true">
+      <div class="background__grid">
+        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=1')"></div>
+        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=2')"></div>
+        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=3')"></div>
+        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=4')"></div>
+        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=5')"></div>
+        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=6')"></div>
+      </div>
+      <div class="background__overlay"></div>
+    </div>
+
+    <header class="main-header" id="mainHeader">
+      <div class="logo">
+        <span class="logo__mark">Jumbo</span>
+        <span class="logo__sub">Engine</span>
+      </div>
+      <button class="primary-button" id="createProjectBtn" type="button">
+        Crear Proyecto
+      </button>
+    </header>
+
+    <main class="dashboard" id="dashboard" aria-labelledby="dashboard-title">
+      <section class="dashboard__content">
+        <h1 id="dashboard-title">Gestor de Proyectos</h1>
+        <p>
+          Diseña experiencias cinemáticas y mundos interactivos con un flujo rápido y elegante.
+        </p>
+      </section>
+
+      <section class="dashboard__cards" aria-label="Resumen del motor">
+        <article class="glass-card">
+          <h2>Flujo Ágil</h2>
+          <p>Organiza tus escenas, assets y físicas con paneles optimizados para iOS.</p>
+        </article>
+        <article class="glass-card">
+          <h2>Renderizado Flexible</h2>
+          <p>Elige el perfil ideal para cada proyecto sin sacrificar rendimiento.</p>
+        </article>
+        <article class="glass-card">
+          <h2>Motor Creativo</h2>
+          <p>Crea cinemáticas inmersivas con herramientas listas para producción.</p>
+        </article>
+      </section>
+    </main>
+
+    <div class="modal-overlay" id="welcomeModal" role="dialog" aria-modal="true">
+      <div class="modal glass-panel">
+        <h2>Bienvenido a Jumbo</h2>
+        <p>
+          En este motor podrás desarrollar juegos complejos, cinemáticas y todo lo que tú
+          imaginas.
+        </p>
+        <button class="primary-button" id="welcomeContinue" type="button">
+          Continuar
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="projectModal" role="dialog" aria-modal="true">
+      <div class="modal glass-panel">
+        <div class="modal__header">
+          <h2>Nuevo Proyecto</h2>
+          <button class="icon-button" id="closeProjectModal" type="button" aria-label="Cerrar">
+            ✕
+          </button>
+        </div>
+        <form id="projectForm" class="form">
+          <label class="form__field">
+            <span>Nombre del Proyecto</span>
+            <input type="text" name="projectName" placeholder="Jumbo Odyssey" required />
+          </label>
+          <label class="form__field">
+            <span>Descripción</span>
+            <textarea name="projectDescription" rows="3" placeholder="Describe la visión del juego"></textarea>
+          </label>
+          <fieldset class="form__field">
+            <legend>Tipo de Renderizado</legend>
+            <div class="selection">
+              <label class="selection__option">
+                <input type="radio" name="renderType" value="compat" checked />
+                <span class="selection__title">Máxima Compatibilidad</span>
+                <span class="selection__subtitle">Optimizado para iPhone 11 y móviles</span>
+              </label>
+              <label class="selection__option">
+                <input type="radio" name="renderType" value="web" />
+                <span class="selection__title">Web</span>
+                <span class="selection__subtitle">Rendimiento universal para todos los dispositivos</span>
+              </label>
+            </div>
+          </fieldset>
+          <button class="primary-button" type="submit">Crear</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      Gracias por probar la aplicación
+    </div>
+
+    <section class="editor" id="editorView" aria-hidden="true">
+      <div class="editor__hud">
+        <button class="editor__exit" id="exitEditor" type="button">
+          ← Salir del Proyecto
+        </button>
+        <span class="editor__badge" id="projectBadge">Proyecto</span>
+      </div>
+      <canvas id="jumboCanvas" class="editor__canvas"></canvas>
+    </section>
+
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="js/editor-core.js"></script>
+    <script src="js/ui-manager.js"></script>
+  </body>
+</html>
