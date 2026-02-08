@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Jumbo Engine - Demo 3D</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #2b2f33;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    #renderCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+    #hud {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 6px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="hud">Jumbo Engine - Demo 3D<br><span id="fps">FPS: --</span></div>
+  <canvas id="renderCanvas"></canvas>
+
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/materialsLibrary/babylon.gridMaterial.min.js"></script>
+  <script>
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true, {
+      preserveDrawingBuffer: false,
+      stencil: false,
+      disableWebGL2Support: false,
+    });
+
+    const scene = new BABYLON.Scene(engine);
+    scene.clearColor = new BABYLON.Color4(0.16, 0.18, 0.2, 1.0);
+    scene.collisionsEnabled = false;
+    scene.shadowsEnabled = false;
+    scene.postProcessesEnabled = false;
+
+    const camera = new BABYLON.ArcRotateCamera(
+      "camera",
+      -Math.PI / 2,
+      Math.PI / 3,
+      8,
+      new BABYLON.Vector3(0, 1, 0),
+      scene
+    );
+    camera.attachControl(canvas, true);
+    camera.lowerRadiusLimit = 4;
+    camera.upperRadiusLimit = 20;
+    camera.wheelPrecision = 60;
+    camera.panningSensibility = 1200;
+    camera.useBouncingBehavior = false;
+    camera.useAutoRotationBehavior = false;
+
+    if (camera.inputs.attached.pointers) {
+      camera.inputs.attached.pointers.multiTouchPanAndZoom = true;
+      camera.inputs.attached.pointers.multiTouchPanning = true;
+      camera.inputs.attached.pointers.pinchPrecision = 80;
+      camera.inputs.attached.pointers.touchAngularSensibilityX = 6000;
+      camera.inputs.attached.pointers.touchAngularSensibilityY = 6000;
+    }
+
+    const hemiLight = new BABYLON.HemisphericLight(
+      "hemiLight",
+      new BABYLON.Vector3(0, 1, 0),
+      scene
+    );
+    hemiLight.intensity = 0.85;
+
+    const dirLight = new BABYLON.DirectionalLight(
+      "dirLight",
+      new BABYLON.Vector3(-0.5, -1, -0.4),
+      scene
+    );
+    dirLight.position = new BABYLON.Vector3(8, 12, 6);
+    dirLight.intensity = 0.45;
+
+    const ground = BABYLON.MeshBuilder.CreateGround(
+      "ground",
+      { width: 20, height: 20 },
+      scene
+    );
+    const gridMaterial = new BABYLON.GridMaterial("gridMaterial", scene);
+    gridMaterial.majorUnitFrequency = 5;
+    gridMaterial.minorUnitVisibility = 0.45;
+    gridMaterial.gridRatio = 1;
+    gridMaterial.backFaceCulling = false;
+    gridMaterial.mainColor = new BABYLON.Color3(0.35, 0.35, 0.35);
+    gridMaterial.lineColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+    gridMaterial.opacity = 0.95;
+    ground.material = gridMaterial;
+
+    const cube = BABYLON.MeshBuilder.CreateBox("cube", { size: 1.2 }, scene);
+    cube.position = new BABYLON.Vector3(0, 1, 0);
+    const cubeMat = new BABYLON.StandardMaterial("cubeMat", scene);
+    cubeMat.diffuseColor = new BABYLON.Color3(0.2, 0.6, 0.9);
+    cube.material = cubeMat;
+
+    const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", { diameter: 1.4, segments: 24 }, scene);
+    sphere.position = new BABYLON.Vector3(2, 1, 0);
+    const sphereMat = new BABYLON.StandardMaterial("sphereMat", scene);
+    sphereMat.diffuseColor = new BABYLON.Color3(0.85, 0.35, 0.4);
+    sphere.material = sphereMat;
+
+    const cylinder = BABYLON.MeshBuilder.CreateCylinder(
+      "cylinder",
+      { height: 1.6, diameter: 1, tessellation: 24 },
+      scene
+    );
+    cylinder.position = new BABYLON.Vector3(-2, 1, 0);
+    const cylMat = new BABYLON.StandardMaterial("cylMat", scene);
+    cylMat.diffuseColor = new BABYLON.Color3(0.4, 0.8, 0.45);
+    cylinder.material = cylMat;
+
+    const scalingLevel = window.devicePixelRatio >= 2 ? 1.5 : 1.2;
+    engine.setHardwareScalingLevel(scalingLevel);
+
+    scene.freezeActiveMeshes();
+
+    const fpsLabel = document.getElementById("fps");
+
+    engine.runRenderLoop(() => {
+      scene.render();
+      fpsLabel.textContent = `FPS: ${engine.getFps().toFixed(0)}`;
+    });
+
+    window.addEventListener("resize", () => {
+      engine.resize();
+    });
+  </script>
+</body>
+</html>
