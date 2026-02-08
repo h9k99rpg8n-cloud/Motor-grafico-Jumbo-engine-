@@ -1,0 +1,17 @@
+{
+  "name": "Jumbo Engine Launcher",
+  "short_name": "Jumbo Launcher",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#2b2b2b",
+  "theme_color": "#2b2b2b",
+  "description": "Launcher estilo Godot para Jumbo Engine.",
+  "icons": [
+    {
+      "src": "./assets/icons/jumbo-icon.svg",
+      "sizes": "256x256",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
