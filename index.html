@@ -33,7 +33,7 @@
         </button>
       </div>
     </header>
-    <button class="settings-button" id="settingsButton" type="button" aria-label="Ajustes">
+    <button class="settings-button" id="btn-settings" type="button" aria-label="Ajustes">
       ⚙️
     </button>
 
@@ -98,6 +98,18 @@
         <p class="projects__empty" id="projectsEmpty">Aún no hay proyectos guardados.</p>
       </section>
     </main>
+
+    <div class="settings-modal translate-y-full" id="modal-settings" role="dialog" aria-modal="true">
+      <div class="settings-modal__header">
+        <h2>Ajustes</h2>
+        <button class="icon-button" id="closeSettingsModal" type="button" aria-label="Cerrar ajustes">
+          ✕
+        </button>
+      </div>
+      <div class="settings-modal__content">
+        <p>Personaliza el color de fondo y acento desde el panel principal.</p>
+      </div>
+    </div>
 
     <div class="modal-overlay" id="welcomeModal" role="dialog" aria-modal="true">
       <div class="modal glass-panel">

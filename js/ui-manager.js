@@ -9,6 +9,9 @@ const createProjectBtn = document.getElementById("createProjectBtn");
 const closeProjectModal = document.getElementById("closeProjectModal");
 const projectForm = document.getElementById("projectForm");
 const toast = document.getElementById("toast");
+const settingsButton = document.getElementById("btn-settings");
+const settingsModal = document.getElementById("modal-settings");
+const closeSettingsModal = document.getElementById("closeSettingsModal");
 const whatsNewKey = "jumboWhatsNewSeen";
 const updateNewsKey = "jumboUpdateNewsSeen";
 
@@ -53,6 +56,33 @@ if (acknowledgeUpdate) {
   acknowledgeUpdate.addEventListener("click", () => {
     hideModal(updateNewsModal);
   });
+}
+
+const openSettingsModal = () => {
+  if (!settingsModal) {
+    return;
+  }
+  console.log("Botón Ajustes Pulsado");
+  settingsModal.classList.remove("translate-y-full");
+  settingsModal.classList.add("translate-y-0");
+};
+
+const closeSettingsPanel = () => {
+  if (!settingsModal) {
+    return;
+  }
+  settingsModal.classList.remove("translate-y-0");
+  settingsModal.classList.add("translate-y-full");
+};
+
+if (settingsButton) {
+  settingsButton.addEventListener("click", openSettingsModal);
+  settingsButton.addEventListener("touchstart", openSettingsModal, { passive: true });
+}
+
+if (closeSettingsModal) {
+  closeSettingsModal.addEventListener("click", closeSettingsPanel);
+  closeSettingsModal.addEventListener("touchstart", closeSettingsPanel, { passive: true });
 }
 
 createProjectBtn.addEventListener("click", () => {
