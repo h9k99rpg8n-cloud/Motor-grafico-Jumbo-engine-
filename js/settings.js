@@ -1,5 +1,5 @@
-const accentColorPicker = document.getElementById("accentColorPicker");
-const resetAccentColor = document.getElementById("resetAccentColor");
+const accentColorPickers = document.querySelectorAll("[data-accent-picker]");
+const resetAccentButtons = document.querySelectorAll("[data-accent-reset]");
 const defaultAccentColor = "#007AFF";
 
 const applyAccentColor = (color) => {
@@ -16,28 +16,33 @@ const applyAccentColor = (color) => {
 
 const loadAccentColor = () => {
   const storedColor = localStorage.getItem("jumboAccentColor") || defaultAccentColor;
-  if (accentColorPicker) {
-    accentColorPicker.value = storedColor;
-  }
+  accentColorPickers.forEach((picker) => {
+    picker.value = storedColor;
+  });
   applyAccentColor(storedColor);
 };
 
-if (accentColorPicker) {
-  accentColorPicker.addEventListener("input", (event) => {
+accentColorPickers.forEach((picker) => {
+  picker.addEventListener("input", (event) => {
     const color = event.target.value;
     applyAccentColor(color);
     localStorage.setItem("jumboAccentColor", color);
+    accentColorPickers.forEach((otherPicker) => {
+      if (otherPicker !== picker) {
+        otherPicker.value = color;
+      }
+    });
   });
-}
+});
 
-if (resetAccentColor) {
-  resetAccentColor.addEventListener("click", () => {
+resetAccentButtons.forEach((button) => {
+  button.addEventListener("click", () => {
     localStorage.setItem("jumboAccentColor", defaultAccentColor);
     applyAccentColor(defaultAccentColor);
-    if (accentColorPicker) {
-      accentColorPicker.value = defaultAccentColor;
-    }
+    accentColorPickers.forEach((picker) => {
+      picker.value = defaultAccentColor;
+    });
   });
-}
+});
 
 window.addEventListener("load", loadAccentColor);

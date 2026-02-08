@@ -2,6 +2,7 @@ const welcomeModal = document.getElementById("welcomeModal");
 const projectModal = document.getElementById("projectModal");
 const welcomeContinue = document.getElementById("welcomeContinue");
 const createProjectBtn = document.getElementById("createProjectBtn");
+const createProjectInline = document.getElementById("createProjectInline");
 const closeProjectModal = document.getElementById("closeProjectModal");
 const projectForm = document.getElementById("projectForm");
 const toast = document.getElementById("toast");
@@ -33,6 +34,12 @@ createProjectBtn.addEventListener("click", () => {
   showModal(projectModal);
 });
 
+if (createProjectInline) {
+  createProjectInline.addEventListener("click", () => {
+    showModal(projectModal);
+  });
+}
+
 closeProjectModal.addEventListener("click", () => {
   hideModal(projectModal);
 });
@@ -41,8 +48,23 @@ projectForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const formData = new FormData(projectForm);
   const projectName = formData.get("projectName");
+  const projectDescription = formData.get("projectDescription");
+  const renderType = formData.get("renderType");
+  const renderTypeLabel =
+    renderType === "compat"
+      ? "Máxima Compatibilidad"
+      : "Web";
   hideModal(projectModal);
   showToast();
+  if (typeof window.addProjectToList === "function") {
+    window.addProjectToList({
+      name: projectName,
+      description: projectDescription,
+      renderType,
+      renderTypeLabel,
+      createdAt: Date.now(),
+    });
+  }
   projectForm.reset();
   setTimeout(() => {
     if (typeof window.initJumboEditor === "function") {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jumbo Engine</title>
     <link rel="stylesheet" href="css/ios-theme.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="background" aria-hidden="true">
@@ -24,9 +25,14 @@
         <span class="logo__mark">Jumbo</span>
         <span class="logo__sub">Engine</span>
       </div>
-      <button class="primary-button" id="createProjectBtn" type="button">
-        Crear Proyecto
-      </button>
+      <div class="header-actions">
+        <button class="primary-button" id="createProjectBtn" type="button">
+          Crear Proyecto
+        </button>
+        <button class="icon-button settings-button" id="openSettings" type="button" aria-label="Abrir ajustes">
+          ⚙️
+        </button>
+      </div>
     </header>
 
     <main class="dashboard" id="dashboard" aria-labelledby="dashboard-title">
@@ -37,15 +43,26 @@
         </p>
       </section>
 
+      <section class="projects glass-card" aria-label="Mis Proyectos">
+        <div class="projects__header">
+          <h2>Mis Proyectos</h2>
+          <button class="secondary-button" id="createProjectInline" type="button">
+            + Crear Proyecto
+          </button>
+        </div>
+        <div class="projects__list" id="projectsList"></div>
+        <p class="projects__empty" id="projectsEmpty">Aún no hay proyectos guardados.</p>
+      </section>
+
       <section class="settings glass-card" aria-label="Personalización de Interfaz">
         <h2>Personalización de Interfaz</h2>
         <p>Elige tu color de acento</p>
         <div class="settings__controls">
           <label class="color-picker">
             <span class="sr-only">Elige tu color de acento</span>
-            <input type="color" id="accentColorPicker" value="#007AFF" />
+            <input type="color" data-accent-picker value="#007AFF" />
           </label>
-          <button class="secondary-button" id="resetAccentColor" type="button">
+          <button class="secondary-button" data-accent-reset type="button">
             Restablecer
           </button>
         </div>
@@ -121,6 +138,47 @@
       Gracias por probar la aplicación
     </div>
 
+    <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true">
+      <div class="modal glass-panel settings-modal">
+        <div class="modal__header">
+          <h2>Ajustes</h2>
+          <button class="icon-button" id="closeSettings" type="button" aria-label="Cerrar ajustes">
+            ✕
+          </button>
+        </div>
+        <div class="settings-panel">
+          <section class="settings-panel__section">
+            <h3>Personalización de Interfaz</h3>
+            <p>Elige tu color de acento</p>
+            <div class="settings__controls">
+              <label class="color-picker">
+                <span class="sr-only">Elige tu color de acento</span>
+                <input type="color" data-accent-picker value="#007AFF" />
+              </label>
+              <button class="secondary-button" data-accent-reset type="button">
+                Restablecer
+              </button>
+            </div>
+          </section>
+          <section class="settings-panel__section">
+            <h3>Idioma</h3>
+            <select id="languageSelect" class="settings-select">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+          </section>
+          <section class="settings-panel__section">
+            <h3>Tema</h3>
+            <label class="switch">
+              <input type="checkbox" id="themeToggle" />
+              <span class="switch__track"></span>
+              <span class="switch__label">Claro / Oscuro</span>
+            </label>
+          </section>
+        </div>
+      </div>
+    </div>
+
     <section class="editor" id="editorView" aria-hidden="true">
       <div class="editor__hud">
         <button class="editor__exit" id="exitEditor" type="button">
@@ -136,5 +194,6 @@
     <script src="js/editor-core.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/ui-manager.js"></script>
+    <script src="main.js"></script>
   </body>
 </html>
