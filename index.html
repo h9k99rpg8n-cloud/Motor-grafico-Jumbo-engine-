@@ -33,6 +33,9 @@
         </button>
       </div>
     </header>
+    <button class="settings-button" id="settingsButton" type="button" aria-label="Ajustes">
+      ⚙️
+    </button>
 
     <main class="dashboard" id="dashboard" aria-labelledby="dashboard-title">
       <section class="dashboard__content">
@@ -85,6 +88,15 @@
           <p>Crea cinemáticas inmersivas con herramientas listas para producción.</p>
         </article>
       </section>
+
+      <section class="projects glass-card" aria-label="Mis Proyectos">
+        <div class="projects__header">
+          <h2>Mis Proyectos</h2>
+          <span class="projects__count" id="projectsCount">0</span>
+        </div>
+        <ul class="projects__list" id="projectsList"></ul>
+        <p class="projects__empty" id="projectsEmpty">Aún no hay proyectos guardados.</p>
+      </section>
     </main>
 
     <div class="modal-overlay" id="welcomeModal" role="dialog" aria-modal="true">
@@ -111,6 +123,19 @@
         </ul>
         <button class="primary-button accent-button" id="skipWhatsNew" type="button">
           Omitir
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="updateNewsModal" role="dialog" aria-modal="true">
+      <div class="modal glass-panel">
+        <h2>Actualización de Estabilidad 1.1</h2>
+        <p>
+          Hemos escuchado a la comunidad. Se corrigió el error del menú de ajustes y la gestión
+          de proyectos ahora es 100% estable.
+        </p>
+        <button class="primary-button accent-button" id="acknowledgeUpdate" type="button">
+          Entendido
         </button>
       </div>
     </div>
@@ -169,6 +194,7 @@
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
     <script src="js/editor-core.js"></script>
+    <script src="js/project-manager.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/ui-manager.js"></script>
   </body>

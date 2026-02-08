@@ -3,11 +3,14 @@ const projectModal = document.getElementById("projectModal");
 const welcomeContinue = document.getElementById("welcomeContinue");
 const whatsNewModal = document.getElementById("whatsNewModal");
 const skipWhatsNew = document.getElementById("skipWhatsNew");
+const updateNewsModal = document.getElementById("updateNewsModal");
+const acknowledgeUpdate = document.getElementById("acknowledgeUpdate");
 const createProjectBtn = document.getElementById("createProjectBtn");
 const closeProjectModal = document.getElementById("closeProjectModal");
 const projectForm = document.getElementById("projectForm");
 const toast = document.getElementById("toast");
 const whatsNewKey = "jumboWhatsNewSeen";
+const updateNewsKey = "jumboUpdateNewsSeen";
 
 const showModal = (modal) => {
   modal.classList.add("is-visible");
@@ -26,6 +29,10 @@ const showToast = () => {
 
 window.addEventListener("load", () => {
   showModal(welcomeModal);
+  if (updateNewsModal && !sessionStorage.getItem(updateNewsKey)) {
+    showModal(updateNewsModal);
+    sessionStorage.setItem(updateNewsKey, "true");
+  }
 });
 
 welcomeContinue.addEventListener("click", () => {
@@ -42,6 +49,12 @@ if (skipWhatsNew) {
   });
 }
 
+if (acknowledgeUpdate) {
+  acknowledgeUpdate.addEventListener("click", () => {
+    hideModal(updateNewsModal);
+  });
+}
+
 createProjectBtn.addEventListener("click", () => {
   showModal(projectModal);
 });
@@ -54,9 +67,20 @@ projectForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const formData = new FormData(projectForm);
   const projectName = formData.get("projectName");
+  const projectDescription = formData.get("projectDescription");
+  if (typeof window.saveProject === "function") {
+    window.saveProject({
+      name: projectName,
+      description: projectDescription,
+      createdAt: new Date().toISOString(),
+    });
+  }
   hideModal(projectModal);
   showToast();
   projectForm.reset();
+  if (typeof window.renderProjectsList === "function") {
+    window.renderProjectsList();
+  }
   setTimeout(() => {
     if (typeof window.initJumboEditor === "function") {
       window.initJumboEditor(projectName);
@@ -64,7 +88,9 @@ projectForm.addEventListener("submit", (event) => {
   }, 1200);
 });
 
-[welcomeModal, whatsNewModal, projectModal].filter(Boolean).forEach((modal) => {
+[welcomeModal, whatsNewModal, updateNewsModal, projectModal]
+  .filter(Boolean)
+  .forEach((modal) => {
   modal.addEventListener("click", (event) => {
     if (event.target === modal) {
       hideModal(modal);
