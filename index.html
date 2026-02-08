@@ -9,12 +9,30 @@
   <body>
     <div class="background" aria-hidden="true">
       <div class="background__grid">
-        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=1')"></div>
-        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=2')"></div>
-        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=3')"></div>
-        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=4')"></div>
-        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=5')"></div>
-        <div class="background__tile" style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=6')"></div>
+        <div
+          class="background__tile"
+          style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=1')"
+        ></div>
+        <div
+          class="background__tile"
+          style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=2')"
+        ></div>
+        <div
+          class="background__tile"
+          style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=3')"
+        ></div>
+        <div
+          class="background__tile"
+          style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=4')"
+        ></div>
+        <div
+          class="background__tile"
+          style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=5')"
+        ></div>
+        <div
+          class="background__tile"
+          style="--image-url: url('https://source.unsplash.com/random/1920x1080/?videogame,scifi&sig=6')"
+        ></div>
       </div>
       <div class="background__overlay"></div>
     </div>
@@ -24,43 +42,77 @@
         <span class="logo__mark">Jumbo</span>
         <span class="logo__sub">Engine</span>
       </div>
-      <button class="primary-button" id="createProjectBtn" type="button">
-        Crear Proyecto
-      </button>
+      <div class="header-actions">
+        <button
+          class="icon-button icon-button--ghost"
+          id="settingsBtn"
+          type="button"
+          aria-label="Ajustes"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Zm8.6 3.6-.9-.3a7.2 7.2 0 0 0-.8-1.9l.5-.8a1 1 0 0 0-.2-1.2l-1.2-1.2a1 1 0 0 0-1.2-.2l-.8.5c-.6-.3-1.2-.6-1.9-.8l-.3-.9A1 1 0 0 0 12 2h-1.7a1 1 0 0 0-1 .7l-.3.9c-.7.2-1.3.5-1.9.8l-.8-.5a1 1 0 0 0-1.2.2L3.9 6a1 1 0 0 0-.2 1.2l.5.8c-.3.6-.6 1.2-.8 1.9l-.9.3a1 1 0 0 0-.7 1V13a1 1 0 0 0 .7 1l.9.3c.2.7.5 1.3.8 1.9l-.5.8a1 1 0 0 0 .2 1.2l1.2 1.2a1 1 0 0 0 1.2.2l.8-.5c.6.3 1.2.6 1.9.8l.3.9a1 1 0 0 0 1 .7H12a1 1 0 0 0 1-.7l.3-.9c.7-.2 1.3-.5 1.9-.8l.8.5a1 1 0 0 0 1.2-.2l1.2-1.2a1 1 0 0 0 .2-1.2l-.5-.8c.3-.6.6-1.2.8-1.9l.9-.3a1 1 0 0 0 .7-1v-1.7a1 1 0 0 0-.7-1Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+        <button class="primary-button" id="createProjectBtn" type="button" data-i18n="createProject">
+          Crear Proyecto
+        </button>
+      </div>
     </header>
 
     <main class="dashboard" aria-labelledby="dashboard-title">
       <section class="dashboard__content">
-        <h1 id="dashboard-title">Gestor de Proyectos</h1>
-        <p>
+        <h1 id="dashboard-title" data-i18n="projectManagerTitle">Gestor de Proyectos</h1>
+        <p data-i18n="projectManagerSubtitle">
           Diseña experiencias cinemáticas y mundos interactivos con un flujo rápido y elegante.
+        </p>
+      </section>
+
+      <section class="projects" aria-labelledby="projects-title">
+        <div class="section-header">
+          <h2 id="projects-title" data-i18n="myProjects">Mis Proyectos</h2>
+          <button class="secondary-button" type="button" id="createProjectSecondary" data-i18n="createProject">
+            Crear Proyecto
+          </button>
+        </div>
+        <div class="projects__list" id="projectsList"></div>
+        <p class="projects__empty" id="projectsEmpty" data-i18n="projectsEmpty">
+          Aún no tienes proyectos. ¡Crea el primero!
         </p>
       </section>
 
       <section class="dashboard__cards" aria-label="Resumen del motor">
         <article class="glass-card">
-          <h2>Flujo Ágil</h2>
-          <p>Organiza tus escenas, assets y físicas con paneles optimizados para iOS.</p>
+          <h2 data-i18n="cardFlowTitle">Flujo Ágil</h2>
+          <p data-i18n="cardFlowText">
+            Organiza tus escenas, assets y físicas con paneles optimizados para iOS.
+          </p>
         </article>
         <article class="glass-card">
-          <h2>Renderizado Flexible</h2>
-          <p>Elige el perfil ideal para cada proyecto sin sacrificar rendimiento.</p>
+          <h2 data-i18n="cardRenderTitle">Renderizado Flexible</h2>
+          <p data-i18n="cardRenderText">
+            Elige el perfil ideal para cada proyecto sin sacrificar rendimiento.
+          </p>
         </article>
         <article class="glass-card">
-          <h2>Motor Creativo</h2>
-          <p>Crea cinemáticas inmersivas con herramientas listas para producción.</p>
+          <h2 data-i18n="cardCreativeTitle">Motor Creativo</h2>
+          <p data-i18n="cardCreativeText">
+            Crea cinemáticas inmersivas con herramientas listas para producción.
+          </p>
         </article>
       </section>
     </main>
 
     <div class="modal-overlay" id="welcomeModal" role="dialog" aria-modal="true">
       <div class="modal glass-panel">
-        <h2>Bienvenido a Jumbo</h2>
-        <p>
+        <h2 data-i18n="welcomeTitle">Bienvenido a Jumbo</h2>
+        <p data-i18n="welcomeBody">
           En este motor podrás desarrollar juegos complejos, cinemáticas y todo lo que tú
           imaginas.
         </p>
-        <button class="primary-button" id="welcomeContinue" type="button">
+        <button class="primary-button" id="welcomeContinue" type="button" data-i18n="continue">
           Continuar
         </button>
       </div>
@@ -69,44 +121,100 @@
     <div class="modal-overlay" id="projectModal" role="dialog" aria-modal="true">
       <div class="modal glass-panel">
         <div class="modal__header">
-          <h2>Nuevo Proyecto</h2>
+          <h2 data-i18n="newProject">Nuevo Proyecto</h2>
           <button class="icon-button" id="closeProjectModal" type="button" aria-label="Cerrar">
             ✕
           </button>
         </div>
         <form id="projectForm" class="form">
           <label class="form__field">
-            <span>Nombre del Proyecto</span>
-            <input type="text" name="projectName" placeholder="Jumbo Odyssey" required />
+            <span data-i18n="projectName">Nombre del Proyecto</span>
+            <input
+              type="text"
+              name="projectName"
+              placeholder="Jumbo Odyssey"
+              data-i18n-placeholder="projectNamePlaceholder"
+              required
+            />
           </label>
           <label class="form__field">
-            <span>Descripción</span>
-            <textarea name="projectDescription" rows="3" placeholder="Describe la visión del juego"></textarea>
+            <span data-i18n="projectDescription">Descripción</span>
+            <textarea
+              name="projectDescription"
+              rows="3"
+              placeholder="Describe la visión del juego"
+              data-i18n-placeholder="projectDescriptionPlaceholder"
+            ></textarea>
           </label>
           <fieldset class="form__field">
-            <legend>Tipo de Renderizado</legend>
+            <legend data-i18n="renderType">Tipo de Renderizado</legend>
             <div class="selection">
               <label class="selection__option">
                 <input type="radio" name="renderType" value="compat" checked />
-                <span class="selection__title">Máxima Compatibilidad</span>
-                <span class="selection__subtitle">Optimizado para iPhone 11 y móviles</span>
+                <span class="selection__title" data-i18n="renderCompatTitle">Máxima Compatibilidad</span>
+                <span class="selection__subtitle" data-i18n="renderCompatSubtitle">
+                  Optimizado para iPhone 11 y móviles
+                </span>
               </label>
               <label class="selection__option">
                 <input type="radio" name="renderType" value="web" />
-                <span class="selection__title">Web</span>
-                <span class="selection__subtitle">Rendimiento universal para todos los dispositivos</span>
+                <span class="selection__title" data-i18n="renderWebTitle">Web</span>
+                <span class="selection__subtitle" data-i18n="renderWebSubtitle">
+                  Rendimiento universal para todos los dispositivos
+                </span>
               </label>
             </div>
           </fieldset>
-          <button class="primary-button" type="submit">Crear</button>
+          <button class="primary-button" type="submit" data-i18n="create">
+            Crear
+          </button>
         </form>
       </div>
     </div>
 
-    <div class="toast" id="toast" role="status" aria-live="polite">
+    <div class="modal-overlay modal-overlay--side" id="settingsPanel" role="dialog" aria-modal="true">
+      <div class="settings-panel">
+        <div class="modal__header">
+          <h2 data-i18n="settingsTitle">Ajustes</h2>
+          <button class="icon-button" id="closeSettings" type="button" aria-label="Cerrar">
+            ✕
+          </button>
+        </div>
+        <div class="settings-group">
+          <div class="settings-row">
+            <div>
+              <h3 data-i18n="appearance">Apariencia</h3>
+              <p data-i18n="appearanceHint">Cambia entre modo oscuro y claro.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="themeToggle" />
+              <span class="switch__track"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div>
+              <h3 data-i18n="language">Idioma</h3>
+              <p data-i18n="languageHint">Selecciona tu idioma preferido.</p>
+            </div>
+            <select id="languageSelect" class="select">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-group settings-group--info">
+          <h3 data-i18n="info">Info</h3>
+          <p data-i18n="infoText">Jumbo Engine • Alpha 0.3 · UI & UX Lab</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" data-i18n="toastMessage">
       Gracias por probar la aplicación
     </div>
 
+    <script src="js/settings.js"></script>
+    <script src="js/project-manager.js"></script>
     <script src="js/ui-manager.js"></script>
   </body>
 </html>
