@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#2b2f33" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Jumbo Engine - Editor</title>
+  <style>
+    :root {
+      --bg: #2b2f33;
+      --panel: rgba(20, 22, 24, 0.72);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text: #f0f0f0;
+      --accent: #5cc4ff;
+      --button: rgba(255, 255, 255, 0.08);
+      --button-active: rgba(92, 196, 255, 0.28);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: var(--bg);
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    #renderCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    #hud {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      color: var(--text);
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 6px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    #ui-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 200px;
+      background: var(--panel);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 12px;
+      box-sizing: border-box;
+      z-index: 4;
+    }
+
+    #ui-panel.landscape {
+      width: 260px;
+    }
+
+    .panel-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #ui-panel.landscape .panel-row.gizmo-row {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--panel-border);
+      background: var(--button);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      touch-action: manipulation;
+    }
+
+    .btn.active {
+      background: var(--button-active);
+      border-color: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 0 0 1px rgba(92, 196, 255, 0.35);
+    }
+
+    .btn.secondary {
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    #create-menu {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #create-menu.open {
+      display: flex;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--panel-border);
+      margin: 2px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    Jumbo Engine - Editor<br>
+    <span id="fps">FPS: --</span><br>
+    <span id="selection">Objeto seleccionado: ninguno</span>
+  </div>
+  <div id="ui-panel">
+    <div class="panel-row">
+      <button class="btn" id="btn-create">📦 Crear Objeto</button>
+      <button class="btn secondary" id="btn-adapt">↔️ Adaptar</button>
+    </div>
+    <div id="create-menu" class="panel-row">
+      <button class="btn secondary" data-shape="box">Cubo</button>
+      <button class="btn secondary" data-shape="sphere">Esfera</button>
+      <button class="btn secondary" data-shape="capsule">Cápsula</button>
+      <button class="btn secondary" data-shape="cylinder">Cilindro</button>
+      <button class="btn secondary" data-shape="plane-horizontal">Plano Horizontal</button>
+      <button class="btn secondary" data-shape="plane-vertical">Plano Vertical</button>
+    </div>
+    <div class="divider"></div>
+    <div class="panel-row gizmo-row">
+      <button class="btn" id="btn-move">Mover</button>
+      <button class="btn" id="btn-rotate">Rotar</button>
+      <button class="btn" id="btn-scale">Escalar</button>
+    </div>
+  </div>
+
+  <canvas id="renderCanvas"></canvas>
+
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/materialsLibrary/babylon.gridMaterial.min.js"></script>
+  <script>
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true, {
+      preserveDrawingBuffer: false,
+      stencil: false,
+      disableWebGL2Support: false,
+    });
+
+    const scene = new BABYLON.Scene(engine);
+    scene.clearColor = new BABYLON.Color4(0.16, 0.18, 0.2, 1.0);
+    scene.collisionsEnabled = false;
+    scene.shadowsEnabled = false;
+    scene.postProcessesEnabled = false;
+
+    const camera = new BABYLON.ArcRotateCamera(
+      "camera",
+      -Math.PI / 2,
+      Math.PI / 3,
+      10,
+      new BABYLON.Vector3(0, 1, 0),
+      scene
+    );
+    camera.attachControl(canvas, true);
+    camera.lowerRadiusLimit = 4;
+    camera.upperRadiusLimit = 24;
+    camera.wheelPrecision = 60;
+    camera.panningSensibility = 1200;
+    camera.useBouncingBehavior = false;
+    camera.useAutoRotationBehavior = false;
+
+    if (camera.inputs.attached.pointers) {
+      camera.inputs.attached.pointers.multiTouchPanAndZoom = true;
+      camera.inputs.attached.pointers.multiTouchPanning = true;
+      camera.inputs.attached.pointers.pinchPrecision = 80;
+      camera.inputs.attached.pointers.touchAngularSensibilityX = 6000;
+      camera.inputs.attached.pointers.touchAngularSensibilityY = 6000;
+    }
+
+    const hemiLight = new BABYLON.HemisphericLight(
+      "hemiLight",
+      new BABYLON.Vector3(0, 1, 0),
+      scene
+    );
+    hemiLight.intensity = 0.85;
+
+    const dirLight = new BABYLON.DirectionalLight(
+      "dirLight",
+      new BABYLON.Vector3(-0.5, -1, -0.4),
+      scene
+    );
+    dirLight.position = new BABYLON.Vector3(8, 12, 6);
+    dirLight.intensity = 0.45;
+
+    const ground = BABYLON.MeshBuilder.CreateGround(
+      "ground",
+      { width: 30, height: 30 },
+      scene
+    );
+    const gridMaterial = new BABYLON.GridMaterial("gridMaterial", scene);
+    gridMaterial.majorUnitFrequency = 5;
+    gridMaterial.minorUnitVisibility = 0.45;
+    gridMaterial.gridRatio = 1;
+    gridMaterial.backFaceCulling = false;
+    gridMaterial.mainColor = new BABYLON.Color3(0.35, 0.35, 0.35);
+    gridMaterial.lineColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+    gridMaterial.opacity = 0.95;
+    ground.material = gridMaterial;
+    ground.metadata = { isGround: true };
+
+    const highlightLayer = new BABYLON.HighlightLayer("highlight", scene);
+    highlightLayer.innerGlow = false;
+    highlightLayer.outerGlow = true;
+
+    const gizmoManager = new BABYLON.GizmoManager(scene);
+    gizmoManager.usePointerToAttachGizmos = false;
+    gizmoManager.clearGizmoOnEmptyPointerEvent = false;
+    gizmoManager.positionGizmoEnabled = true;
+
+    const gizmoButtons = {
+      move: document.getElementById("btn-move"),
+      rotate: document.getElementById("btn-rotate"),
+      scale: document.getElementById("btn-scale"),
+    };
+
+    const hudFps = document.getElementById("fps");
+    const hudSelection = document.getElementById("selection");
+    const uiPanel = document.getElementById("ui-panel");
+    const createMenu = document.getElementById("create-menu");
+
+    let selectedMesh = null;
+    let scalingLevel = Math.min(2, Math.max(1, window.devicePixelRatio || 1.2));
+    engine.setHardwareScalingLevel(scalingLevel);
+
+    const updateSelectionHud = () => {
+      hudSelection.textContent = `Objeto seleccionado: ${selectedMesh ? selectedMesh.name : "ninguno"}`;
+    };
+
+    const clearSelection = () => {
+      if (selectedMesh) {
+        highlightLayer.removeMesh(selectedMesh);
+      }
+      selectedMesh = null;
+      gizmoManager.attachToMesh(null);
+      updateSelectionHud();
+    };
+
+    const setSelectedMesh = (mesh) => {
+      if (selectedMesh === mesh) return;
+      clearSelection();
+      if (!mesh) return;
+      selectedMesh = mesh;
+      highlightLayer.addMesh(mesh, new BABYLON.Color3(0.6, 0.85, 1));
+      gizmoManager.attachToMesh(mesh);
+      updateSelectionHud();
+    };
+
+    const setGizmoMode = (mode) => {
+      gizmoManager.positionGizmoEnabled = mode === "move";
+      gizmoManager.rotationGizmoEnabled = mode === "rotate";
+      gizmoManager.scaleGizmoEnabled = mode === "scale";
+      Object.entries(gizmoButtons).forEach(([key, button]) => {
+        button.classList.toggle("active", key === mode);
+      });
+    };
+
+    setGizmoMode("move");
+
+    const disableCameraForDrag = (gizmo) => {
+      if (!gizmo) return;
+      gizmo.onDragStartObservable.add(() => camera.detachControl());
+      gizmo.onDragEndObservable.add(() => camera.attachControl(canvas, true));
+    };
+
+    disableCameraForDrag(gizmoManager.gizmos.positionGizmo);
+    disableCameraForDrag(gizmoManager.gizmos.rotationGizmo);
+    disableCameraForDrag(gizmoManager.gizmos.scaleGizmo);
+
+    scene.onPointerObservable.add((pointerInfo) => {
+      if (pointerInfo.type !== BABYLON.PointerEventTypes.POINTERDOWN) return;
+      const eventTarget = pointerInfo.event?.target;
+      if (eventTarget && (eventTarget.closest?.("#ui-panel") || eventTarget.closest?.("#hud"))) {
+        return;
+      }
+      const pickInfo = pointerInfo.pickInfo;
+      if (!pickInfo?.hit || !pickInfo.pickedMesh) {
+        clearSelection();
+        return;
+      }
+      const mesh = pickInfo.pickedMesh;
+      if (mesh.metadata?.isGround) {
+        clearSelection();
+        return;
+      }
+      setSelectedMesh(mesh);
+    });
+
+    const createWhiteMaterial = (name) => {
+      const mat = new BABYLON.StandardMaterial(name, scene);
+      mat.diffuseColor = new BABYLON.Color3(1, 1, 1);
+      mat.specularColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+      return mat;
+    };
+
+    const createObject = (type) => {
+      let mesh;
+      switch (type) {
+        case "box":
+          mesh = BABYLON.MeshBuilder.CreateBox(`Cubo_${Date.now()}`, { size: 1.4 }, scene);
+          break;
+        case "sphere":
+          mesh = BABYLON.MeshBuilder.CreateSphere(`Esfera_${Date.now()}`, { diameter: 1.6, segments: 24 }, scene);
+          break;
+        case "capsule":
+          mesh = BABYLON.MeshBuilder.CreateCapsule(`Capsula_${Date.now()}`, { height: 2, radius: 0.5, tessellation: 16 }, scene);
+          break;
+        case "cylinder":
+          mesh = BABYLON.MeshBuilder.CreateCylinder(`Cilindro_${Date.now()}`, { height: 1.8, diameter: 1.1, tessellation: 24 }, scene);
+          break;
+        case "plane-horizontal":
+          mesh = BABYLON.MeshBuilder.CreatePlane(`PlanoH_${Date.now()}`, { size: 2.5 }, scene);
+          mesh.rotation.x = Math.PI / 2;
+          break;
+        case "plane-vertical":
+          mesh = BABYLON.MeshBuilder.CreatePlane(`PlanoV_${Date.now()}`, { size: 2.5 }, scene);
+          break;
+        default:
+          return;
+      }
+
+      mesh.material = createWhiteMaterial(`${mesh.name}_mat`);
+      const forward = camera.getForwardRay().direction.normalize();
+      const spawnDistance = 4;
+      const position = camera.position.add(forward.scale(spawnDistance));
+      mesh.position = new BABYLON.Vector3(position.x, Math.max(0.6, position.y), position.z);
+      setSelectedMesh(mesh);
+    };
+
+    document.getElementById("btn-create").addEventListener("click", () => {
+      createMenu.classList.toggle("open");
+    });
+
+    document.getElementById("btn-adapt").addEventListener("click", () => {
+      applyLayout(true);
+    });
+
+    createMenu.querySelectorAll("button[data-shape]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const shape = button.getAttribute("data-shape");
+        createObject(shape);
+        createMenu.classList.remove("open");
+      });
+    });
+
+    gizmoButtons.move.addEventListener("click", () => setGizmoMode("move"));
+    gizmoButtons.rotate.addEventListener("click", () => setGizmoMode("rotate"));
+    gizmoButtons.scale.addEventListener("click", () => setGizmoMode("scale"));
+
+    const applyLayout = (force = false) => {
+      const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+      if (isLandscape) {
+        uiPanel.classList.add("landscape");
+      } else {
+        uiPanel.classList.remove("landscape");
+      }
+      if (force) {
+        uiPanel.style.opacity = "0.95";
+        window.setTimeout(() => {
+          uiPanel.style.opacity = "";
+        }, 200);
+      }
+    };
+
+    applyLayout();
+    window.addEventListener("resize", applyLayout);
+
+    let frameCount = 0;
+    let lastFpsCheck = performance.now();
+
+    engine.runRenderLoop(() => {
+      scene.render();
+      hudFps.textContent = `FPS: ${engine.getFps().toFixed(0)}`;
+
+      frameCount++;
+      const now = performance.now();
+      if (now - lastFpsCheck > 1000) {
+        const fps = engine.getFps();
+        if (fps < 40 && scalingLevel < 2.2) {
+          scalingLevel = Math.min(2.2, scalingLevel + 0.1);
+          engine.setHardwareScalingLevel(Number(scalingLevel.toFixed(2)));
+        } else if (fps > 55 && scalingLevel > 1) {
+          scalingLevel = Math.max(1, scalingLevel - 0.1);
+          engine.setHardwareScalingLevel(Number(scalingLevel.toFixed(2)));
+        }
+        frameCount = 0;
+        lastFpsCheck = now;
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      engine.resize();
+    });
+  </script>
+</body>
+</html>
