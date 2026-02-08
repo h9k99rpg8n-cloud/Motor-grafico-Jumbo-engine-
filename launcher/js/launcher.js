@@ -136,7 +136,8 @@ async function createProject() {
   renderRecent();
   await renderProjects(projectsGrid, layout);
   closeModal(newProjectModal);
-  window.location.href = `./editor.html?id=${encodeURIComponent(project.id)}`;
+  sessionStorage.setItem("currentProject", project.id);
+  window.location.href = `../editor/editor.html`;
 }
 
 function setupInstallPrompt() {

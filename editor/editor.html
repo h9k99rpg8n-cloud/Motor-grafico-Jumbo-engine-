@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1e1e1e" />
+  <title>Jumbo Engine Editor 3D</title>
+  <link rel="stylesheet" href="./css/editor.css" />
+  <link rel="stylesheet" href="./css/viewport.css" />
+  <link rel="stylesheet" href="./css/panels.css" />
+  <link rel="stylesheet" href="./css/toolbar.css" />
+  <link rel="stylesheet" href="./css/gizmos.css" />
+</head>
+<body>
+  <div class="editor">
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <div class="logo">Jumbo Engine</div>
+        <div class="project-meta">
+          <span id="project-name">Proyecto</span>
+        </div>
+      </div>
+      <div class="toolbar-center">
+        <button class="btn" id="save-btn">Guardar</button>
+        <button class="btn" id="undo-btn">Deshacer</button>
+        <button class="btn" id="redo-btn">Rehacer</button>
+        <div class="mode-group">
+          <button class="btn mode" data-mode="select">Seleccionar</button>
+          <button class="btn mode" data-mode="move">Mover</button>
+          <button class="btn mode" data-mode="rotate">Rotar</button>
+          <button class="btn mode" data-mode="scale">Escalar</button>
+        </div>
+        <button class="btn primary" id="play-btn">Play</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn" id="menu-btn">☰</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="viewport" id="viewport">
+        <canvas id="gl-canvas"></canvas>
+        <div class="viewport-overlay">
+          <div class="view-buttons">
+            <button class="btn small" data-view="front">Front</button>
+            <button class="btn small" data-view="back">Back</button>
+            <button class="btn small" data-view="top">Top</button>
+            <button class="btn small" data-view="bottom">Bottom</button>
+            <button class="btn small" data-view="left">Left</button>
+            <button class="btn small" data-view="right">Right</button>
+            <button class="btn small" data-view="perspective">Perspective</button>
+          </div>
+          <div class="frame-buttons">
+            <button class="btn small" id="frame-selected">Frame Selected (F)</button>
+            <button class="btn small" id="frame-all">Frame All</button>
+          </div>
+          <div class="gizmo-overlay" id="gizmo-overlay"></div>
+        </div>
+      </section>
+
+      <aside class="panel scene-tree">
+        <div class="panel-header">
+          <h2>Scene Tree</h2>
+          <button class="btn small" id="add-node">+</button>
+        </div>
+        <ul id="scene-tree-list"></ul>
+      </aside>
+    </main>
+
+    <section class="panel inspector">
+      <div class="tabs">
+        <button class="tab active" data-tab="transform">Transform</button>
+        <button class="tab" data-tab="material">Material</button>
+        <button class="tab" data-tab="physics">Physics</button>
+      </div>
+      <div class="tab-content active" id="tab-transform"></div>
+      <div class="tab-content" id="tab-material"></div>
+      <div class="tab-content" id="tab-physics">
+        <p>Próximamente: física y colisiones.</p>
+      </div>
+    </section>
+
+    <footer class="status-bar">
+      <span id="fps">FPS: 0</span>
+      <span id="object-count">Objetos: 0</span>
+      <span id="poly-count">Polígonos: 0</span>
+      <span id="renderer-info">Renderer: WebGL</span>
+    </footer>
+
+    <div class="mobile-panels">
+      <button class="btn" data-mobile-panel="scene">Scene</button>
+      <button class="btn" data-mobile-panel="inspector">Inspector</button>
+    </div>
+  </div>
+
+  <div id="context-menu" class="context-menu" hidden>
+    <button data-action="duplicate">Duplicar</button>
+    <button data-action="delete">Eliminar</button>
+    <button data-action="rename">Renombrar</button>
+    <button data-action="copy">Copiar</button>
+    <button data-action="paste">Pegar</button>
+    <button data-action="add-child">Agregar hijo</button>
+  </div>
+
+  <script type="module" src="./js/editor-main.js"></script>
+</body>
+</html>

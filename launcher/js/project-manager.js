@@ -67,7 +67,8 @@ export async function renderProjects(container, layout = "grid") {
 export async function handleProjectAction(action, id) {
   if (action === "open") {
     updateRecentList(await getProject(id));
-    window.location.href = `./editor.html?id=${encodeURIComponent(id)}`;
+    sessionStorage.setItem("currentProject", id);
+    window.location.href = `../editor/editor.html`;
     return;
   }
 
