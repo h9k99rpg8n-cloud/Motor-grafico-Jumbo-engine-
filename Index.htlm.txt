@@ -9,6 +9,7 @@
         #lienzoRender { width: 100%; height: 100%; touch-action: none; }
     </style>
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
     <script src="https://cdn.babylonjs-playground.com/loaders/babylonjs.loaders.min.js"></script>
 </head>
 <body>
@@ -20,6 +21,7 @@
         import { iniciarMotor } from './nucleo/Bucle.js';
         import { crearCaja } from './nucleo/Objetos.js';
         import { crearEntornoPersonalizado } from './nucleo/Entorno.js'; // <-- ¡Llamamos al experto correcto!
+        import { iniciarModeladorMovil } from './nucleo/Modelador.js';
 
         // --- ARRANQUE DEL MOTOR JUMBO ---
 
@@ -34,6 +36,7 @@
         crearEntornoPersonalizado(escena); // "¡Decora el mundo con nuestro cielo y suelo!"
         const miCaja = crearCaja(escena);
         miCaja.position.y = 1; // Subimos la caja para que no esté enterrada
+        iniciarModeladorMovil(escena);
 
         // ¡Encendemos el motor!
         iniciarMotor(motorBabylon, escena);

@@ -9,3 +9,13 @@ export function crearCaja(escena) {
     // La devolvemos por si queremos hacer algo más con ella después.
     return caja;
 }
+
+export function crearEsfera(escena) {
+    const esfera = BABYLON.MeshBuilder.CreateSphere("esfera", { diameter: 1.6 }, escena);
+    return esfera;
+}
+
+export function crearCilindro(escena) {
+    const cilindro = BABYLON.MeshBuilder.CreateCylinder("cilindro", { height: 1.8, diameter: 1.2 }, escena);
+    return cilindro;
+}
