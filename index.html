@@ -37,6 +37,20 @@
         </p>
       </section>
 
+      <section class="settings glass-card" aria-label="Personalización de Interfaz">
+        <h2>Personalización de Interfaz</h2>
+        <p>Elige tu color de acento</p>
+        <div class="settings__controls">
+          <label class="color-picker">
+            <span class="sr-only">Elige tu color de acento</span>
+            <input type="color" id="accentColorPicker" value="#007AFF" />
+          </label>
+          <button class="secondary-button" id="resetAccentColor" type="button">
+            Restablecer
+          </button>
+        </div>
+      </section>
+
       <section class="dashboard__cards" aria-label="Resumen del motor">
         <article class="glass-card">
           <h2>Flujo Ágil</h2>
@@ -120,6 +134,7 @@
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
     <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
     <script src="js/editor-core.js"></script>
+    <script src="js/settings.js"></script>
     <script src="js/ui-manager.js"></script>
   </body>
 </html>
