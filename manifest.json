@@ -1,0 +1,11 @@
+{
+  "name": "Jumbo Visual",
+  "short_name": "Jumbo",
+  "display": "standalone",
+  "start_url": "./",
+  "scope": "./",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": []
+}
