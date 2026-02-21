@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Jumbo Engine - Fase de Inicio</title>
+  <style>
+    :root {
+      --bg: #07090f;
+      --bg-soft: #101523;
+      --card: rgba(17, 22, 36, 0.92);
+      --line: rgba(109, 135, 202, 0.25);
+      --text: #f4f6ff;
+      --muted: #9ea9c7;
+      --accent: linear-gradient(135deg, #7f5bff, #18b7ff);
+      --shadow: 0 20px 42px rgba(0, 0, 0, 0.45);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(125, 95, 255, 0.24), transparent 46%),
+        radial-gradient(circle at 85% 80%, rgba(0, 212, 255, 0.15), transparent 45%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom);
+    }
+
+    .app {
+      width: min(100%, 414px);
+      min-height: 740px;
+      border-radius: 34px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(160deg, rgba(10, 14, 24, 0.98), rgba(9, 12, 21, 0.94));
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      padding: 28px 22px 32px;
+      display: grid;
+      align-content: center;
+      gap: 20px;
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+      pointer-events: none;
+      transition: opacity .38s ease, transform .38s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .brand {
+      text-align: center;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      letter-spacing: 0.16em;
+      font-weight: 850;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .hero {
+      margin: 0;
+      font-weight: 550;
+      text-align: center;
+      color: #e8ecff;
+      font-size: clamp(1.2rem, 3.5vw, 1.45rem);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .project-empty {
+      min-height: 86px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 540;
+      letter-spacing: 0.03em;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 16px;
+      padding: 15px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      background: var(--accent);
+      box-shadow: 0 14px 26px rgba(53, 95, 255, 0.35);
+      cursor: pointer;
+      transition: transform .2s ease, filter .2s ease;
+    }
+
+    .btn:active {
+      transform: scale(.98);
+      filter: brightness(1.07);
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .93rem;
+      margin-bottom: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      background: #0d1321;
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: .98rem;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: rgba(96, 140, 255, 0.8);
+      box-shadow: 0 0 0 3px rgba(58, 110, 255, 0.18);
+    }
+
+    .editor-space {
+      min-height: 100%;
+      border-radius: 18px;
+      border: 1px solid rgba(101, 126, 190, 0.26);
+      background:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+        radial-gradient(circle at 50% 20%, rgba(67, 108, 255, 0.16), transparent 50%),
+        #090d19;
+      background-size: 36px 36px, 36px 36px, 100% 100%, 100% 100%;
+      display: grid;
+      place-items: center;
+      color: #9fb0de;
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-align: center;
+      padding: 22px;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 38px;
+      width: calc(100% - 40px);
+      transform: translate(-50%, 24px);
+      opacity: 0;
+      padding: 14px 18px;
+      background: rgba(13, 20, 36, 0.95);
+      border: 1px solid rgba(121, 146, 216, 0.45);
+      border-radius: 14px;
+      color: #eff3ff;
+      text-align: center;
+      font-size: .95rem;
+      transition: opacity .35s ease, transform .35s ease;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <section class="screen active" data-view="home">
+      <h1 class="brand">JUMBO ENGINE</h1>
+      <p class="hero">Bienvenido a Home</p>
+      <div class="card project-empty">Proyecto Vacío</div>
+      <button class="btn" id="startCreateBtn">+ Crear Proyecto</button>
+    </section>
+
+    <section class="screen" data-view="config">
+      <h2 class="hero">Crear Proyecto</h2>
+      <div class="card">
+        <label>
+          Nombre del Proyecto
+          <input id="projectName" type="text" placeholder="Mi proyecto Jumbo" />
+        </label>
+        <label>
+          Tipo de Almacenamiento
+          <select id="storageType">
+            <option value="local">Local</option>
+            <option value="icloud">iCloud</option>
+            <option value="server">Servidor</option>
+          </select>
+        </label>
+        <button class="btn" id="confirmCreateBtn">Confirmar y Crear</button>
+      </div>
+    </section>
+
+    <section class="screen" data-view="editor">
+      <h2 class="hero">Editor Jumbo</h2>
+      <div class="editor-space" id="editorSpace">Espacio 3D básico listo.</div>
+    </section>
+
+    <div class="toast" id="toast"></div>
+  </main>
+
+  <script>
+    // view-manager.js (integrado)
+    const ViewManager = (() => {
+      const screens = [...document.querySelectorAll('.screen')];
+      const setView = (name) => {
+        screens.forEach((screen) => {
+          screen.classList.toggle('active', screen.dataset.view === name);
+        });
+      };
+      return { setView };
+    })();
+
+    // storage-system.js (integrado)
+    const StorageSystem = (() => {
+      const createProjectRecord = ({ name, storage }) => ({
+        id: Date.now(),
+        name: name?.trim() || 'Proyecto sin nombre',
+        storage,
+        createdAt: new Date().toISOString()
+      });
+
+      const saveChoice = (record) => {
+        const payload = JSON.stringify(record);
+        localStorage.setItem('jumbo:lastProject', payload);
+        return record;
+      };
+
+      return { createProjectRecord, saveChoice };
+    })();
+
+    const state = {
+      currentView: 'home',
+      project: null
+    };
+
+    const toast = document.getElementById('toast');
+    const nameInput = document.getElementById('projectName');
+    const storageSelect = document.getElementById('storageType');
+    const editorSpace = document.getElementById('editorSpace');
+
+    const setState = (patch) => {
+      Object.assign(state, patch);
+      ViewManager.setView(state.currentView);
+    };
+
+    const showToast = (message, ms = 1800) => {
+      toast.textContent = message;
+      toast.classList.add('show');
+      window.setTimeout(() => toast.classList.remove('show'), ms);
+    };
+
+    document.getElementById('startCreateBtn').addEventListener('click', () => {
+      setState({ currentView: 'config' });
+    });
+
+    document.getElementById('confirmCreateBtn').addEventListener('click', () => {
+      const record = StorageSystem.createProjectRecord({
+        name: nameInput.value,
+        storage: storageSelect.value
+      });
+      StorageSystem.saveChoice(record);
+
+      showToast('¡Gracias por usar la aplicación! Iniciando Jumbo Engine...');
+      window.setTimeout(() => {
+        editorSpace.textContent = `Proyecto: ${record.name} · Almacenamiento: ${record.storage}`;
+        setState({ currentView: 'editor', project: record });
+      }, 900);
+    });
+  </script>
+</body>
+</html>
