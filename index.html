@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🐘 Jumbo Engine 0.3</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: -apple-system, sans-serif; background: #0a0a0c; color: white; overflow: hidden; user-select: none; }
+        canvas { display: none; width: 100%; height: 100%; touch-action: none; position: absolute; z-index: 0; }
+
+        /* EL LAUNCHER */
+        #launcher {
+            position: absolute; width: 100%; height: 100%; z-index: 10;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: radial-gradient(circle at 50% 0%, #2a2a35 0%, #050508 80%);
+            transition: opacity 0.4s ease;
+        }
+
+        .logo { font-size: 70px; margin-bottom: 0px; filter: drop-shadow(0px 0px 10px rgba(0,255,136,0.3)); }
+        h1 { margin: 10px 0 0 0; font-size: 36px; letter-spacing: 3px; font-weight: 900; }
+        p { color: #00ff88; font-size: 14px; letter-spacing: 2px; margin-bottom: 40px; font-weight: bold; }
+
+        .contenedor-botones { display: flex; flex-direction: column; gap: 15px; width: 85%; max-width: 320px; }
+
+        .boton-jumbo {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;
+            padding: 18px 20px; font-size: 18px; border-radius: 16px; font-weight: bold;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(10px); transition: transform 0.1s, background 0.2s;
+        }
+        .boton-jumbo:active { transform: scale(0.96); background: rgba(255,255,255,0.1); }
+        .boton-destacado { border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.2); }
+
+        /* FORMULARIO NUEVO PROYECTO (ACTUALIZACIÓN 0.3) */
+        #panel-nuevo {
+            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #1a1a24; padding: 25px; border-radius: 20px; border: 1px solid #333;
+            width: 85%; max-width: 320px; z-index: 20; box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        }
+        #panel-nuevo h3 { margin: 0 0 15px 0; color: #00ff88; text-align: center; font-size: 22px; }
+
+        .input-form {
+            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: none;
+            background: #0a0a0c; color: white; font-size: 16px; box-sizing: border-box; outline: none;
+            border: 1px solid #555; font-family: inherit;
+        }
+        .input-form:focus { border-color: #00ff88; }
+
+        /* Área para la descripción más grande */
+        textarea.input-form { resize: none; height: 80px; }
+
+        .fila-botones { display: flex; gap: 10px; }
+        .fila-botones button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; font-size: 16px; transition: 0.2s;}
+        .fila-botones button:active { transform: scale(0.95); }
+        .btn-crear { background: #00ff88; color: black; }
+        .btn-cancelar { background: #3a3a45; color: white; }
+
+        #btn-salir-editor {
+            display: none; position: absolute; top: 40px; left: 20px; z-index: 20;
+            background: rgba(0,0,0,0.6); border: 1px solid #444; color: white;
+            padding: 12px 20px; border-radius: 25px; font-weight: bold; backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="launcher">
+        <div class="logo">🐘</div>
+        <h1>JUMBO</h1>
+        <p>VERSIÓN 0.3</p>
+
+        <div class="contenedor-botones">
+            <button id="btn-nuevo" class="boton-jumbo boton-destacado">
+                <span>Nuevo Proyecto</span> <span>➕</span>
+            </button>
+            <button id="btn-cargar" class="boton-jumbo">
+                <span>Mis Juegos (<span id="contador-juegos">0</span>)</span> <span>📂</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="panel-nuevo">
+        <h3>Crear Juego</h3>
+        <input type="text" id="input-nombre" class="input-form" placeholder="Nombre de tu juego..." autocomplete="off">
+        <textarea id="input-desc" class="input-form" placeholder="Descripción de qué trata tu juego..."></textarea>
+
+        <div class="fila-botones">
+            <button class="btn-cancelar" id="btn-salir-form">Salir</button>
+            <button class="btn-crear" id="btn-crear-final">Crear</button>
+        </div>
+    </div>
+
+    <canvas id="jumbo-canvas"></canvas>
+    <button id="btn-salir-editor">⬅️ Guardar y Salir</button>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
