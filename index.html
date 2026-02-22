@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Jumbo Engine Launcher</title>
+  <style>
+    :root {
+      --bg: #07090f;
+      --panel: rgba(13, 18, 31, 0.95);
+      --card: rgba(18, 25, 43, 0.88);
+      --line: rgba(106, 137, 215, 0.32);
+      --text: #edf2ff;
+      --muted: #9aa8cb;
+      --accent: linear-gradient(140deg, #6f57ff, #18b8ff);
+      --danger: #ff5a74;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(129, 96, 255, 0.25), transparent 45%),
+        radial-gradient(circle at 80% 90%, rgba(24, 185, 255, 0.16), transparent 45%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom);
+    }
+
+    .app {
+      width: min(100%, 414px);
+      min-height: 740px;
+      border-radius: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(160deg, #080c18, #0b1120);
+      box-shadow: 0 26px 50px rgba(0,0,0,.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .launcher {
+      min-height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+      padding: 24px 18px 26px;
+    }
+
+    .brand {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(1.8rem, 6vw, 2.4rem);
+      font-weight: 850;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin: 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .projects {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .project-card {
+      position: relative;
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 17px;
+      padding: 14px 14px 16px;
+      backdrop-filter: blur(8px);
+    }
+
+    .project-title {
+      margin: 0;
+      font-size: 1.03rem;
+      font-weight: 650;
+      max-width: 80%;
+      word-break: break-word;
+    }
+
+    .project-meta {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: .84rem;
+      text-transform: capitalize;
+    }
+
+    .menu-trigger {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      border: 1px solid rgba(162, 184, 238, 0.25);
+      background: rgba(10,14,24,.9);
+      color: #dbe4ff;
+      border-radius: 10px;
+      width: 34px;
+      height: 30px;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 0;
+      cursor: pointer;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 42px;
+      right: 10px;
+      width: 146px;
+      border-radius: 12px;
+      border: 1px solid rgba(126, 150, 215, 0.45);
+      background: rgba(11, 17, 30, 0.98);
+      display: none;
+      overflow: hidden;
+      z-index: 8;
+    }
+
+    .dropdown.open { display: grid; }
+
+    .menu-item {
+      border: none;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      padding: 11px 12px;
+      font-size: .88rem;
+      cursor: pointer;
+    }
+
+    .menu-item + .menu-item { border-top: 1px solid rgba(255,255,255,.06); }
+    .menu-item.delete { color: #ffb4c0; }
+
+    .actions { display: grid; gap: 12px; }
+
+    .btn {
+      border: none;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      box-shadow: 0 14px 24px rgba(53,95,255,.33);
+      cursor: pointer;
+    }
+
+    .config-panel {
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--panel);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    label { color: var(--muted); font-size: .9rem; display: grid; gap: 6px; }
+
+    input, select {
+      width: 100%;
+      border: 1px solid rgba(129, 153, 221, .3);
+      border-radius: 12px;
+      background: #0d1324;
+      color: var(--text);
+      padding: 11px 12px;
+      font-size: .95rem;
+      outline: none;
+    }
+
+    .editor {
+      border: 1px solid rgba(106, 133, 208, 0.29);
+      border-radius: 16px;
+      min-height: 155px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #a8b7de;
+      padding: 18px;
+      background:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px),
+        radial-gradient(circle at 50% 30%, rgba(67, 108, 255, .16), transparent 50%),
+        #090e19;
+      background-size: 34px 34px, 34px 34px, 100% 100%, 100% 100%;
+    }
+
+    .welcome-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 4, 10, 0.83);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      z-index: 20;
+      transition: opacity .35s ease;
+    }
+
+    .welcome-modal.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .welcome-card {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(13, 19, 34, 0.97);
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 18px 32px rgba(0,0,0,.4);
+    }
+
+    .welcome-title { margin: 0; font-size: 1.5rem; }
+    .welcome-sub { margin: 10px 0 18px; color: var(--muted); }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(24px);
+      opacity: 0;
+      transition: .3s ease;
+      width: calc(100% - 28px);
+      border-radius: 13px;
+      border: 1px solid rgba(127,154,218,.45);
+      background: rgba(13,20,36,.95);
+      text-align: center;
+      padding: 12px;
+      font-size: .9rem;
+      z-index: 30;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <section class="launcher">
+      <header>
+        <h1 class="brand">JUMBO</h1>
+        <p class="subtitle">Launcher de Proyectos</p>
+      </header>
+
+      <section class="projects" id="projectList"></section>
+
+      <section class="actions">
+        <div class="config-panel">
+          <label>
+            Nombre del Proyecto
+            <input id="projectName" placeholder="Mi mundo Jumbo" />
+          </label>
+          <label>
+            Tipo de Almacenamiento
+            <select id="storageType">
+              <option value="local">Local</option>
+              <option value="icloud">iCloud</option>
+              <option value="server">Servidor</option>
+            </select>
+          </label>
+          <button class="btn" id="createProjectBtn">+ Crear Proyecto</button>
+        </div>
+        <div class="editor" id="editorArea">Espacio 3D básico listo.</div>
+      </section>
+    </section>
+
+    <section class="welcome-modal" id="welcomeModal">
+      <div class="welcome-card">
+        <h2 class="welcome-title">Bienvenida a Jumbo</h2>
+        <p class="welcome-sub">Crea un mundo sin límites</p>
+        <button class="btn" id="continueBtn">Continuar</button>
+      </div>
+    </section>
+
+    <div class="toast" id="toast"></div>
+  </main>
+
+  <script>
+    const state = {
+      projects: [],
+      activeProjectId: null,
+      menuOpenFor: null,
+      welcomeVisible: true
+    };
+
+    const ui = {
+      welcomeModal: document.getElementById('welcomeModal'),
+      continueBtn: document.getElementById('continueBtn'),
+      projectName: document.getElementById('projectName'),
+      storageType: document.getElementById('storageType'),
+      createProjectBtn: document.getElementById('createProjectBtn'),
+      projectList: document.getElementById('projectList'),
+      editorArea: document.getElementById('editorArea'),
+      toast: document.getElementById('toast')
+    };
+
+    const showToast = (text, ms = 1400) => {
+      ui.toast.textContent = text;
+      ui.toast.classList.add('show');
+      setTimeout(() => ui.toast.classList.remove('show'), ms);
+    };
+
+    // WelcomeManager
+    const WelcomeManager = (() => {
+      const hide = () => {
+        state.welcomeVisible = false;
+        ui.welcomeModal.classList.add('hidden');
+      };
+
+      const init = () => ui.continueBtn.addEventListener('click', hide);
+      return { init, hide };
+    })();
+
+    // SettingsMenu
+    const SettingsMenu = (() => {
+      const closeMenus = () => {
+        state.menuOpenFor = null;
+        render();
+      };
+
+      const toggleMenu = (id) => {
+        state.menuOpenFor = state.menuOpenFor === id ? null : id;
+        render();
+      };
+
+      const renameProject = (id) => {
+        const project = state.projects.find((p) => p.id === id);
+        const name = prompt('Nuevo nombre del proyecto:', project?.name || '');
+        if (!name) return;
+        project.name = name.trim() || project.name;
+        state.menuOpenFor = null;
+        render();
+        showToast('Proyecto renombrado');
+      };
+
+      const duplicateProject = (id) => {
+        const source = state.projects.find((p) => p.id === id);
+        if (!source) return;
+        const copy = { ...source, id: Date.now() + Math.floor(Math.random() * 5000), name: `${source.name} (Copia)` };
+        state.projects.unshift(copy);
+        state.activeProjectId = copy.id;
+        state.menuOpenFor = null;
+        render();
+        showToast('Proyecto duplicado');
+      };
+
+      const deleteProject = (id) => {
+        if (!confirm('¿Eliminar este proyecto? Esta acción no se puede deshacer.')) return;
+        state.projects = state.projects.filter((p) => p.id !== id);
+        if (state.activeProjectId === id) state.activeProjectId = state.projects[0]?.id || null;
+        state.menuOpenFor = null;
+        render();
+        showToast('Proyecto eliminado');
+      };
+
+      return { closeMenus, toggleMenu, renameProject, duplicateProject, deleteProject };
+    })();
+
+    // ProjectList
+    const ProjectList = (() => {
+      const createProject = () => {
+        const name = ui.projectName.value.trim() || 'Proyecto sin nombre';
+        const storage = ui.storageType.value;
+        const project = { id: Date.now(), name, storage, createdAt: new Date().toLocaleString('es-ES') };
+
+        state.projects.unshift(project);
+        state.activeProjectId = project.id;
+        ui.projectName.value = '';
+        render();
+
+        showToast('¡Gracias por usar la aplicación! Iniciando Jumbo Engine...');
+      };
+
+      const init = () => {
+        ui.createProjectBtn.addEventListener('click', createProject);
+      };
+
+      return { init, createProject };
+    })();
+
+    function renderProjects() {
+      if (!state.projects.length) {
+        ui.projectList.innerHTML = '<article class="project-card"><h3 class="project-title">Proyecto Vacío</h3><p class="project-meta">Crea tu primer proyecto para empezar.</p></article>';
+        return;
+      }
+
+      ui.projectList.innerHTML = state.projects.map((project) => {
+        const open = state.menuOpenFor === project.id ? 'open' : '';
+        return `
+          <article class="project-card" data-id="${project.id}">
+            <h3 class="project-title">${project.name}</h3>
+            <p class="project-meta">Almacenamiento: ${project.storage} · ${project.createdAt}</p>
+            <button class="menu-trigger" data-action="toggle" data-id="${project.id}" aria-label="Abrir menú">...</button>
+            <div class="dropdown ${open}">
+              <button class="menu-item" data-action="rename" data-id="${project.id}">Renombrar</button>
+              <button class="menu-item" data-action="duplicate" data-id="${project.id}">Duplicar</button>
+              <button class="menu-item delete" data-action="delete" data-id="${project.id}">Eliminar</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      ui.editorArea.textContent = state.activeProjectId
+        ? `Proyecto activo: ${state.projects.find((p) => p.id === state.activeProjectId)?.name || ''}`
+        : 'Espacio 3D básico listo.';
+    }
+
+    function wireProjectActions() {
+      ui.projectList.querySelectorAll('[data-action]').forEach((el) => {
+        el.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const id = Number(el.dataset.id);
+          const action = el.dataset.action;
+          if (action === 'toggle') SettingsMenu.toggleMenu(id);
+          if (action === 'rename') SettingsMenu.renameProject(id);
+          if (action === 'duplicate') SettingsMenu.duplicateProject(id);
+          if (action === 'delete') SettingsMenu.deleteProject(id);
+        });
+      });
+    }
+
+    function render() {
+      renderProjects();
+      wireProjectActions();
+    }
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.project-card')) SettingsMenu.closeMenus();
+    });
+
+    WelcomeManager.init();
+    ProjectList.init();
+    render();
+  </script>
+</body>
+</html>
