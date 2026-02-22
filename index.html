@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jumbo Engine - Radar WebGPU</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .pantalla {
+            background: #000;
+            border: 2px solid #555;
+            border-radius: 10px;
+            padding: 20px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pantalla">
+        <h2>🐘 INICIANDO JUMBO ENGINE...</h2>
+        <div id="consola">Buscando tarjeta gráfica...</div>
+    </div>
+
+    <script>
+        async function encenderMotor() {
+            const consola = document.getElementById('consola');
+
+            if (!navigator.gpu) {
+                consola.innerHTML = "<h3 style='color: #ff4444;'>❌ ALERTA ROJA: Safari no tiene WebGPU activado.</h3><p>Ve a Configuración > Safari > Avanzado y busca 'WebGPU' para encenderlo.</p>";
+                return;
+            }
+
+            try {
+                const adaptador = await navigator.gpu.requestAdapter();
+                if (adaptador) {
+                    consola.innerHTML = "<h3 style='color: #00ff88;'>✅ ¡SISTEMA JUMBO EN LÍNEA!</h3><p>WebGPU conectado y listo para renderizar 3D.</p>";
+                } else {
+                    consola.innerHTML = "<h3 style='color: #ffaa00;'>⚠️ ALERTA NARANJA: WebGPU existe pero falló la conexión al chip.</h3>";
+                }
+            } catch (error) {
+                consola.innerHTML = "<h3 style='color: #ff4444;'>❌ ERROR CRÍTICO: " + error.message + "</h3>";
+            }
+        }
+
+        encenderMotor();
+    </script>
+</body>
+</html>
