@@ -3,15 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🐘 Jumbo Engine Alpha</title>
+    <title>🐘 Jumbo Launcher</title>
     <style>
-        /* Quitamos los márgenes y hacemos el canvas pantalla completa */
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-        canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+        /* Estilos generales para que parezca una App de iOS */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0c; color: white; overflow: hidden; user-select: none; }
+        
+        /* El lienzo del motor (escondido al principio) */
+        canvas { display: none; width: 100%; height: 100%; touch-action: none; position: absolute; top: 0; left: 0; z-index: 0; }
+
+        /* --- ESTILOS DEL LAUNCHER --- */
+        #launcher {
+            position: absolute; width: 100%; height: 100%; z-index: 10;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #1a1a24 0%, #0a0a0c 100%);
+            transition: opacity 0.5s ease;
+        }
+
+        .logo { font-size: 60px; margin-bottom: 10px; }
+        h1 { margin: 0; font-size: 32px; letter-spacing: 2px; text-transform: uppercase; }
+        p { color: #888; font-size: 14px; margin-bottom: 40px; }
+
+        /* Tarjetas de Proyectos */
+        .contenedor-botones { display: flex; flex-direction: column; gap: 15px; width: 80%; max-width: 300px; }
+        
+        .boton-jumbo {
+            background: #2a2a35; border: 2px solid #3a3a45; color: white;
+            padding: 15px 20px; font-size: 18px; border-radius: 15px; font-weight: bold;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.2s;
+        }
+        
+        .boton-jumbo:active { transform: scale(0.95); background: #3a3a45; }
+        .boton-destacado { border-color: #00ff88; color: #00ff88; }
+        
+        /* Botón de regresar al launcher */
+        #btn-salir {
+            display: none; position: absolute; top: 40px; left: 20px; z-index: 20;
+            background: rgba(0,0,0,0.5); border: 1px solid white; color: white;
+            padding: 10px 15px; border-radius: 20px; font-weight: bold; backdrop-filter: blur(5px);
+        }
     </style>
 </head>
 <body>
+
+    <div id="launcher">
+        <div class="logo">🐘</div>
+        <h1>Jumbo</h1>
+        <p>MOBILE GAME ENGINE</p>
+
+        <div class="contenedor-botones">
+            <button id="btn-nuevo" class="boton-jumbo boton-destacado">
+                <span>Nuevo Proyecto</span> <span>➕</span>
+            </button>
+            <button id="btn-cargar" class="boton-jumbo">
+                <span>Cargar Juego</span> <span>📂</span>
+            </button>
+            <button class="boton-jumbo" style="opacity: 0.5;">
+                <span>Opciones</span> <span>⚙️</span>
+            </button>
+        </div>
+    </div>
+
     <canvas id="jumbo-canvas"></canvas>
+    
+    <button id="btn-salir">⬅️ Salir</button>
 
     <script type="module" src="./main.js"></script>
 </body>

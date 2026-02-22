@@ -1,29 +1,45 @@
-// main.js - El punto de entrada de tu juego
-// Importamos la clase Renderer desde el otro archivo
+// main.js - El controlador del Launcher y el Motor
 import { Renderer } from './Renderer.js';
 
-async function iniciarJumbo() {
-    // 1. Buscamos el lienzo en el HTML
-    const canvas = document.getElementById('jumbo-canvas');
+// Variables de la interfaz
+const launcher = document.getElementById('launcher');
+const canvas = document.getElementById('jumbo-canvas');
+const btnNuevo = document.getElementById('btn-nuevo');
+const btnSalir = document.getElementById('btn-salir');
 
-    // 2. Creamos una nueva instancia del motor gráfico
-    const engine = new Renderer(canvas);
+// Instancia del motor (apagada al principio)
+let engine = null;
 
-    try {
-        // 3. Intentamos encenderlo
-        console.log("Iniciando sistemas...");
-        await engine.init();
+// Cuando tocamos "Nuevo Proyecto"
+btnNuevo.addEventListener('click', async () => {
+    // 1. Ocultar el launcher con una animación
+    launcher.style.opacity = '0';
+    setTimeout(() => { launcher.style.display = 'none'; }, 500);
 
-        // 4. Si todo sale bien, arrancamos el bucle de dibujo
-        console.log("Sistemas listos. Arrancando motor.");
-        engine.start();
+    // 2. Mostrar el lienzo de la gráfica y el botón de salir
+    canvas.style.display = 'block';
+    btnSalir.style.display = 'block';
 
-    } catch (error) {
-        // Si algo falla (ej. no hay WebGPU), lo mostramos en la pantalla
-        document.body.innerHTML = `<h1 style="color:red; text-align:center; margin-top:50px;">❌ Error: ${error.message}</h1>`;
-        console.error(error);
+    // 3. Encender el motor Jumbo solo si no estaba encendido ya
+    if (!engine) {
+        engine = new Renderer(canvas);
+        try {
+            console.log("🐘 Arrancando Jumbo Engine...");
+            await engine.init();
+            engine.start();
+        } catch (error) {
+            alert("Error al cargar la tarjeta gráfica: " + error.message);
+        }
     }
-}
+});
 
-// Ejecutamos la función principal
-iniciarJumbo();
+// Cuando tocamos "Salir" para volver al Launcher
+btnSalir.addEventListener('click', () => {
+    // Escondemos el juego
+    canvas.style.display = 'none';
+    btnSalir.style.display = 'none';
+    
+    // Mostramos el menú
+    launcher.style.display = 'flex';
+    setTimeout(() => { launcher.style.opacity = '1'; }, 50);
+});
