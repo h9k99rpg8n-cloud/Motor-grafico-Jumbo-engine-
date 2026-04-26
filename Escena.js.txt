@@ -8,6 +8,11 @@ export function crearEscena(motor, lienzo) {
     // Creamos una cámara.
     const camara = new BABYLON.ArcRotateCamera("camara", -Math.PI / 2, Math.PI / 2.5, 15, BABYLON.Vector3.Zero(), escena);
     camara.attachControl(lienzo, true);
+    camara.lowerRadiusLimit = 4;
+    camara.upperRadiusLimit = 60;
+    camara.wheelPrecision = 80;
+    camara.pinchPrecision = 200;
+    camara.panningSensibility = 60;
 
     // Creamos una luz.
     const luz = new BABYLON.HemisphericLight("luz", new BABYLON.Vector3(1, 1, 0), escena);

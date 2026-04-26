@@ -1,0 +1,132 @@
+// --- Módulo de Modelador Móvil (iOS) ---
+import { crearCaja, crearEsfera, crearCilindro } from './Objetos.js';
+
+function crearBoton(texto, color) {
+    const boton = BABYLON.GUI.Button.CreateSimpleButton(`boton-${texto}`, texto);
+    boton.width = "160px";
+    boton.height = "44px";
+    boton.color = "white";
+    boton.cornerRadius = 10;
+    boton.background = color;
+    boton.thickness = 0;
+    boton.paddingBottom = "10px";
+    return boton;
+}
+
+function prepararArrastre(mesh) {
+    if (mesh.metadata?.dragBehavior) {
+        return;
+    }
+    const dragBehavior = new BABYLON.PointerDragBehavior({
+        dragPlaneNormal: new BABYLON.Vector3(0, 1, 0)
+    });
+    dragBehavior.useObjectOrientationForDragging = false;
+    mesh.addBehavior(dragBehavior);
+    mesh.metadata = { ...(mesh.metadata || {}), dragBehavior };
+}
+
+export function iniciarModeladorMovil(escena) {
+    const ui = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("ui-modelador");
+    const panel = new BABYLON.GUI.StackPanel();
+    panel.width = "180px";
+    panel.isVertical = true;
+    panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+    panel.paddingRight = "12px";
+    ui.addControl(panel);
+
+    let seleccionado = null;
+
+    const resaltarSeleccion = (mesh) => {
+        if (seleccionado && seleccionado !== mesh) {
+            seleccionado.outlineWidth = 0;
+        }
+        seleccionado = mesh;
+        if (seleccionado) {
+            seleccionado.outlineColor = new BABYLON.Color3(0.2, 0.9, 0.9);
+            seleccionado.outlineWidth = 0.08;
+            prepararArrastre(seleccionado);
+        }
+    };
+
+    escena.onPointerObservable.add((pointerInfo) => {
+        if (pointerInfo.type !== BABYLON.PointerEventTypes.POINTERDOWN) {
+            return;
+        }
+        if (!pointerInfo.pickInfo?.hit) {
+            return;
+        }
+        const mesh = pointerInfo.pickInfo.pickedMesh;
+        if (!mesh || mesh.name === "suelo" || mesh.name === "skyBox") {
+            return;
+        }
+        resaltarSeleccion(mesh);
+    });
+
+    const crearYSeleccionar = (mesh) => {
+        mesh.position = new BABYLON.Vector3(0, 1, 0);
+        resaltarSeleccion(mesh);
+    };
+
+    const botonCaja = crearBoton("Caja", "#2b8a3e");
+    botonCaja.onPointerUpObservable.add(() => crearYSeleccionar(crearCaja(escena)));
+
+    const botonEsfera = crearBoton("Esfera", "#1c7ed6");
+    botonEsfera.onPointerUpObservable.add(() => crearYSeleccionar(crearEsfera(escena)));
+
+    const botonCilindro = crearBoton("Cilindro", "#ae3ec9");
+    botonCilindro.onPointerUpObservable.add(() => crearYSeleccionar(crearCilindro(escena)));
+
+    const botonSubir = crearBoton("Subir", "#f08c00");
+    botonSubir.onPointerUpObservable.add(() => {
+        if (seleccionado) {
+            seleccionado.position.y += 0.5;
+        }
+    });
+
+    const botonBajar = crearBoton("Bajar", "#f76707");
+    botonBajar.onPointerUpObservable.add(() => {
+        if (seleccionado) {
+            seleccionado.position.y = Math.max(0.2, seleccionado.position.y - 0.5);
+        }
+    });
+
+    const botonRotar = crearBoton("Rotar", "#0b7285");
+    botonRotar.onPointerUpObservable.add(() => {
+        if (seleccionado) {
+            seleccionado.rotation.y += Math.PI / 8;
+        }
+    });
+
+    const botonEscalaMas = crearBoton("Escala +", "#5f3dc4");
+    botonEscalaMas.onPointerUpObservable.add(() => {
+        if (seleccionado) {
+            seleccionado.scaling.scaleInPlace(1.1);
+        }
+    });
+
+    const botonEscalaMenos = crearBoton("Escala -", "#7048e8");
+    botonEscalaMenos.onPointerUpObservable.add(() => {
+        if (seleccionado) {
+            seleccionado.scaling.scaleInPlace(0.9);
+        }
+    });
+
+    const botonEliminar = crearBoton("Eliminar", "#e03131");
+    botonEliminar.onPointerUpObservable.add(() => {
+        if (seleccionado) {
+            seleccionado.dispose();
+            seleccionado = null;
+        }
+    });
+
+    panel.addControl(botonCaja);
+    panel.addControl(botonEsfera);
+    panel.addControl(botonCilindro);
+    panel.addControl(botonSubir);
+    panel.addControl(botonBajar);
+    panel.addControl(botonRotar);
+    panel.addControl(botonEscalaMas);
+    panel.addControl(botonEscalaMenos);
+    panel.addControl(botonEliminar);
+}
