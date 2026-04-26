@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#020617" />
   <title>Jumbo Engine • Modelado Modular</title>
   <style>
     :root {
@@ -15,66 +16,122 @@
       --accent2: #8b5cf6;
       --ok: #22c55e;
       --danger: #ef4444;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --app-height: 100dvh;
       --r: 14px;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; width: 100%; height: 100%; background: var(--bg); color: var(--txt); font-family: Inter, system-ui, sans-serif; overflow: hidden; }
-    .app { height: 100%; display: grid; grid-template-rows: 56px 1fr 68px; }
+    html, body {
+      margin: 0; width: 100%; height: 100%; overflow: hidden;
+      background: var(--bg); color: var(--txt); font-family: Inter, system-ui, sans-serif;
+      overscroll-behavior: none;
+    }
+    .app {
+      height: var(--app-height);
+      display: grid;
+      grid-template-rows: calc(56px + var(--safe-top)) 1fr calc(72px + var(--safe-bottom));
+    }
     .top {
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      padding: 10px 12px; border-bottom: 1px solid var(--line); background: var(--panel); backdrop-filter: blur(10px);
+      display: flex; align-items: end; justify-content: space-between; gap: 10px;
+      padding: var(--safe-top) 12px 10px;
+      border-bottom: 1px solid var(--line); background: var(--panel); backdrop-filter: blur(10px);
     }
     .brand { font-weight: 800; letter-spacing: .2px; }
     .badge { color: var(--muted); font-size: 12px; }
     .workspace { position: relative; min-height: 0; }
     #renderCanvas { width: 100%; height: 100%; touch-action: none; display: block; }
+
     .hud {
       position: absolute; top: 10px; left: 10px; right: 10px;
       display: flex; justify-content: space-between; gap: 8px; pointer-events: none;
     }
     .pill {
+      min-height: 42px;
       pointer-events: auto;
       background: #0f172ae8; border: 1px solid var(--line); border-radius: 999px;
-      padding: 6px 10px; font-size: 12px;
+      padding: 8px 12px; font-size: 12px; color: var(--txt);
     }
+
     .panel {
-      position: absolute; bottom: 76px; left: 10px; right: 10px;
-      background: #020617ed; border: 1px solid var(--line); border-radius: var(--r);
-      padding: 10px; max-height: 48%; overflow: auto;
-      transform: translateY(120%); transition: transform .2s ease;
+      position: absolute;
+      bottom: calc(80px + var(--safe-bottom));
+      left: 10px; right: 10px;
+      background: #020617f0;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      max-height: 56%;
+      overflow: auto;
+      transform: translateY(120%);
+      transition: transform .22s ease;
+      padding: 8px 10px 12px;
+      touch-action: pan-y;
     }
     .panel.open { transform: translateY(0); }
-    .grid { display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .btn {
-      border: 1px solid var(--line); background: #1e293b; color: var(--txt); border-radius: 12px;
-      padding: 10px; font-weight: 700;
+    .panelHandle {
+      width: 58px; height: 5px; border-radius: 999px;
+      background: #64748b;
+      margin: 4px auto 8px;
     }
-    .btn.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: 0; }
+
+    .btn {
+      min-height: 46px;
+      border: 1px solid var(--line); background: #1e293b; color: var(--txt); border-radius: 12px;
+      padding: 10px; font-weight: 700; font-size: 14px;
+    }
     .btn.ok { background: linear-gradient(135deg, #16a34a, var(--ok)); border: 0; }
     .btn.danger { background: linear-gradient(135deg, #dc2626, var(--danger)); border: 0; }
+
     .toolbar {
-      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 8px; padding: 10px; border-top: 1px solid var(--line); background: var(--panel);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px 10px calc(10px + var(--safe-bottom));
+      border-top: 1px solid var(--line);
+      background: var(--panel);
     }
-    .sectionTitle { margin: 6px 0; font-size: 13px; color: var(--muted); }
+    .sectionTitle { margin: 8px 0 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; }
+    .tip { margin: 0 0 8px; font-size: 12px; color: var(--muted); }
     .list { display: grid; gap: 6px; }
     .item {
-      border: 1px solid var(--line); background: #0f172a; border-radius: 10px;
-      padding: 8px 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;
+      border: 1px solid var(--line);
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 13px;
+      color: var(--txt);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
     }
     .item.sel { border-color: var(--accent); }
     .field { display: grid; gap: 4px; margin-bottom: 8px; }
     .field label { font-size: 12px; color: var(--muted); }
-    .field input[type="range"] { width: 100%; }
+    .field input[type="range"] { width: 100%; accent-color: var(--accent); }
+
     @media (min-width: 880px) {
-      .app { grid-template-columns: 300px 1fr; grid-template-rows: 56px 1fr; }
+      .app { grid-template-columns: 320px 1fr; grid-template-rows: calc(56px + var(--safe-top)) 1fr; }
       .top { grid-column: 1 / -1; }
       .workspace { grid-column: 2; grid-row: 2; }
       .panel {
-        grid-column: 1; grid-row: 2; position: static; transform: none; border-radius: 0; border-left: 0;
+        grid-column: 1; grid-row: 2;
+        position: static; transform: none; border-radius: 0; border-left: 0;
         border-top: 0; border-bottom: 0; max-height: none;
       }
-      .toolbar { grid-column: 2; position: absolute; right: 10px; left: auto; bottom: 10px; width: min(520px, calc(100% - 20px)); border-radius: 12px; border: 1px solid var(--line); }
+      .panelHandle { display: none; }
+      .toolbar {
+        grid-column: 2;
+        position: absolute;
+        right: 10px;
+        left: auto;
+        bottom: 10px;
+        width: min(620px, calc(100% - 20px));
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        padding: 10px;
+      }
     }
   </style>
 </head>
@@ -82,10 +139,13 @@
   <main class="app">
     <header class="top">
       <div class="brand">🧩 Jumbo Modeler</div>
-      <div class="badge">Básico • Modular • Móvil</div>
+      <div class="badge">Optimizado iOS / Android</div>
     </header>
 
-    <aside id="sidePanel" class="panel open">
+    <aside id="sidePanel" class="panel open" aria-label="Panel de modelado">
+      <div id="panelHandle" class="panelHandle"></div>
+      <p class="tip">1 dedo: rotar cámara · 2 dedos: zoom/pan · toca objeto para seleccionarlo.</p>
+
       <div class="sectionTitle">Objetos</div>
       <div id="objectList" class="list"></div>
 
@@ -97,7 +157,7 @@
       <button id="deleteBtn" class="btn danger" style="width:100%">Eliminar seleccionado</button>
     </aside>
 
-    <section class="workspace">
+    <section class="workspace" id="workspace">
       <canvas id="renderCanvas"></canvas>
       <div class="hud">
         <button id="togglePanel" class="pill">☰ Panel</button>
@@ -108,6 +168,7 @@
         <button id="addSphere" class="btn">⚽ Esfera</button>
         <button id="addCylinder" class="btn">🥫 Cilindro</button>
         <button id="focusSel" class="btn ok">🎯 Enfocar</button>
+        <button id="unselect" class="btn">🙅 Deseleccionar</button>
         <button id="clearAll" class="btn danger">🧹 Limpiar</button>
       </nav>
     </section>

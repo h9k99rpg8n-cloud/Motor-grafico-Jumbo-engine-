@@ -13,11 +13,12 @@ export function crearModelador(scene) {
   const crear = (tipo) => {
     contador += 1;
     const nombre = `${tipo}_${String(contador).padStart(2, '0')}`;
-    let mesh;
+    let mesh = null;
 
     if (tipo === 'caja') mesh = BABYLON.MeshBuilder.CreateBox(nombre, { size: 1.5 }, scene);
     if (tipo === 'esfera') mesh = BABYLON.MeshBuilder.CreateSphere(nombre, { diameter: 1.5, segments: 24 }, scene);
     if (tipo === 'cilindro') mesh = BABYLON.MeshBuilder.CreateCylinder(nombre, { height: 2, diameter: 1.2 }, scene);
+    if (!mesh) return null;
 
     mesh.position = new BABYLON.Vector3((Math.random() - 0.5) * 6, 1.1, (Math.random() - 0.5) * 6);
     mesh.material = materialAleatorio(scene);
@@ -29,15 +30,19 @@ export function crearModelador(scene) {
   const seleccionar = (mesh) => {
     seleccionado = mesh;
     objetos.forEach((o) => {
-      if (o.renderOutline) {
-        o.renderOutline = false;
-      }
+      if (o.renderOutline) o.renderOutline = false;
     });
+
     if (seleccionado) {
       seleccionado.outlineColor = BABYLON.Color3.White();
       seleccionado.outlineWidth = 0.05;
       seleccionado.renderOutline = true;
     }
+  };
+
+  const deseleccionar = () => {
+    if (seleccionado?.renderOutline) seleccionado.renderOutline = false;
+    seleccionado = null;
   };
 
   const eliminarSeleccionado = () => {
@@ -65,6 +70,7 @@ export function crearModelador(scene) {
   return {
     crear,
     seleccionar,
+    deseleccionar,
     eliminarSeleccionado,
     limpiar,
     setTransform,
